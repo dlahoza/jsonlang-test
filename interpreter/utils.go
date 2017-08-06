@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"github.com/pkg/errors"
-	//"fmt"
 	"strconv"
 )
 
@@ -59,6 +58,5 @@ func resolveVariable(value string, globalVars, localVars *VarScope) (res string,
 			res, _ = localVars.Get(id)
 		}
 	}
-	//fmt.Printf("Variable resolving. Input %q. Output %q.\n", value, res)
 	return
 }

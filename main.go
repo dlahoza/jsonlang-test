@@ -1,57 +1,45 @@
 package main
 
 import (
-	"bytes"
+	"flag"
 	"fmt"
+	"os"
+
 	"github.com/DLag/jsonlang-test/interpreter"
 	"github.com/DLag/jsonlang-test/parser"
-	"os"
 )
 
-var script = `{
-  "var1":1,
-  "var2":2,
-
-  "init": [
-    {"cmd" : "#setup" }
-  ],
-
-  "setup": [
-    {"cmd":"update", "id": "var1", "value":3.5},
-    {"cmd":"print", "value": "#var1"},
-    {"cmd":"#sum", "id": "var1", "value1":"#var1", "value2":"#var2"},
-    {"cmd":"print", "value": "#var1"},
-    {"cmd":"create", "id": "var3", "value":5},
-    {"cmd":"delete", "id": "var1"},
-    {"cmd":"sub", "id": "var2", "operand1":"#var2", "operand2":"1"},
-    {"cmd":"#printAll"}
-  ],
-
-  "sum": [
-      {"cmd":"add", "id": "$id", "operand1":"$value1", "operand2":"$value2"}
-  ],
-
-  "printAll":
-  [
-    {"cmd":"print", "value": "#var1"},
-    {"cmd":"print", "value": "#var2"},
-    {"cmd":"print", "value": "#var3"}
-  ]
-}`
-
 func main() {
-	var err error
-	buf := bytes.NewBufferString(script)
-	globalVars := interpreter.NewVarScope()
-	localVars := interpreter.NewVarScope()
-	internalFuncs := interpreter.NewInternalFuncScope(10)
-	globalFuncs := interpreter.NewFuncScope(10)
-	if err = parser.Parse(buf, globalVars, globalFuncs); err != nil {
-		fmt.Println("Error parsing script: ", err)
-		os.Exit(1)
+	var maxDepth int
+	var help bool
+	flag.IntVar(&maxDepth, "maxdepth", 10, "maximum stack depth")
+	flag.IntVar(&maxDepth, "d", 10, "maximum stack depth")
+	flag.BoolVar(&help, "help", false, "show this help")
+	flag.BoolVar(&help, "h", false, "show this help")
+	flag.Parse()
+	if help {
+		fmt.Println("JSON FSL interpreter")
+		fmt.Println("Usage: " + flag.Arg(0) + " [OPTIONS]... [FILES]...")
+		fmt.Println("\t-d, --maxdepth <num>\tSet maximum execution stack depth")
+		fmt.Println("\t-h, --help\t\tShow this help")
+		os.Exit(0)
 	}
-	if err = globalFuncs.Execute("init", globalVars, localVars, internalFuncs, globalFuncs, 0); err != nil {
-		fmt.Println("Error parsing script: ", err)
-		os.Exit(1)
+	scripts := flag.Args()
+	internalFuncs := interpreter.NewInternalFuncScope(maxDepth)
+	globalFuncs := interpreter.NewFuncScope(maxDepth)
+	globalVars := interpreter.NewVarScope()
+	for _, script := range scripts {
+		fmt.Printf("Executing script %q\n", script)
+		f, err := os.Open(script)
+		defer f.Close()
+		localVars := interpreter.NewVarScope()
+		if err = parser.Parse(f, globalVars, globalFuncs); err != nil {
+			fmt.Println("Error parsing script: ", err)
+			os.Exit(1)
+		}
+		if err = globalFuncs.Execute("init", globalVars, localVars, internalFuncs, globalFuncs, 0); err != nil {
+			fmt.Println("Error executing script: ", err)
+			os.Exit(1)
+		}
 	}
 }

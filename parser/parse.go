@@ -15,7 +15,11 @@ func Parse(r io.Reader, globalVars *interpreter.VarScope, globalFuncs *interpret
 		errors.Wrap(err, ErrorCannotReadProgram)
 	}
 	program := make(map[string]interface{})
-	json.Unmarshal(buf, &program)
+	err = json.Unmarshal(buf, &program)
+	if err != nil {
+		errors.Wrap(err, "Cannot parse the script")
+		return
+	}
 	for item, value := range program {
 		switch value.(type) {
 		case string:

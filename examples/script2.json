@@ -1,0 +1,23 @@
+{
+  "str1": "Hello, ",
+  "str2": "world!",
+  "init": [
+    {"cmd" : "#doStuff" }
+  ],
+  "doStuff": [
+    {"cmd":"create", "id": "var1", "value":10},
+    {"cmd":"mul", "id": "var4", "operand1":"#var1", "operand2":"#var3"},
+    {"cmd":"div", "id": "var5", "operand1":"#var1", "operand2":"#var3"},
+    {"cmd":"add", "id": "strHW", "operand1":"#str1", "operand2":"#str2"},
+    {"cmd":"#printAll2"}
+  ],
+  "printAll2":
+  [
+    {"cmd":"print", "value": "#var1"},
+    {"cmd":"print", "value": "#var2"},
+    {"cmd":"print", "value": "#var3"},
+    {"cmd":"print", "value": "#var4"},
+    {"cmd":"print", "value": "#var5"},
+    {"cmd":"print", "value": "#strHW"}
+  ]
+}

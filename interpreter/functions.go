@@ -3,7 +3,6 @@ package interpreter
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	//"github.com/davecgh/go-spew/spew"
 )
 
 type FuncScope struct {
@@ -19,11 +18,6 @@ func NewFuncScope(maxDepth int) *FuncScope {
 }
 
 func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) (err error) {
-	//fmt.Printf("Executing %q with\n", name)
-	//fmt.Println("Global Scope:")
-	//spew.Dump(globalVars.vars)
-	//fmt.Println("Local Scope:")
-	//spew.Dump(localVars.vars)
 	errorStr := fmt.Sprintf("Can't execute function %q", name)
 	if depth > s.maxDepth {
 		err = errors.Wrap(ErrorMaxDepth, errorStr)
@@ -32,7 +26,6 @@ func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, intern
 	} else {
 		err = f.Execute(globalVars, localVars, internalFuncs, globalFuncs, depth)
 	}
-	//fmt.Println("=================================")
 	return
 }
 

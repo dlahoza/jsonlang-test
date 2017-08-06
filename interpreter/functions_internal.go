@@ -13,7 +13,7 @@ func (funcCreate) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 	if id, value, err = getIDValue(localVars); err != nil {
 		err = errors.Wrap(err, "Can't get variable info")
 	} else if err = globalVars.Create(id, value); err != nil {
-		err = errors.Wrapf(err, "Can't funcCreate variable %q", id)
+		err = errors.Wrapf(err, "Can't create variable %q", id)
 	}
 	return
 }
@@ -25,7 +25,7 @@ func (funcUpdate) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 	if id, value, err = getIDValue(localVars); err != nil {
 		err = errors.Wrap(err, "Can't get variable info")
 	} else if err = globalVars.Update(id, value); err != nil {
-		err = errors.Wrapf(err, "Can't funcUpdate variable %q", id)
+		err = errors.Wrapf(err, "Can't update variable %q", id)
 	}
 	return
 }
@@ -85,6 +85,32 @@ func (funcSub) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) 
 	return
 }
 
+type funcMul struct{}
+
+func (funcMul) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
+	var id, result string
+	var o1, o2 float64
+	if id, o1, o2, err = getIDOperandsNum(localVars); err != nil {
+		err = errors.Wrap(err, "Can't get variable info")
+	}
+	result = strconv.FormatFloat(o1*o2, 'f', -1, 64)
+	globalVars.Set(id, result)
+	return
+}
+
+type funcDiv struct{}
+
+func (funcDiv) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
+	var id, result string
+	var o1, o2 float64
+	if id, o1, o2, err = getIDOperandsNum(localVars); err != nil {
+		err = errors.Wrap(err, "Can't get variable info")
+	}
+	result = strconv.FormatFloat(o1/o2, 'f', -1, 64)
+	globalVars.Set(id, result)
+	return
+}
+
 func NewInternalFuncScope(maxDepth int) *FuncScope {
 	scope := NewFuncScope(maxDepth)
 	scope.Set("create", &funcCreate{})
@@ -93,5 +119,7 @@ func NewInternalFuncScope(maxDepth int) *FuncScope {
 	scope.Set("print", &funcPrint{})
 	scope.Set("add", &funcAdd{})
 	scope.Set("sub", &funcSub{})
+	scope.Set("mul", &funcMul{})
+	scope.Set("div", &funcDiv{})
 	return scope
 }
