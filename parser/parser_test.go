@@ -4,15 +4,16 @@ import (
 	"io"
 	"testing"
 
+	"bytes"
+	"fmt"
+
 	"github.com/DLag/jsonlang-test/interpreter"
 	"github.com/stretchr/testify/assert"
-	"fmt"
-	"bytes"
 )
 
 var errMock = fmt.Errorf("some error")
 
-type errorReaderMock struct {}
+type errorReaderMock struct{}
 
 func (errorReaderMock) Read(p []byte) (n int, err error) {
 	return 0, errMock
@@ -39,7 +40,7 @@ func TestParse_Errors(t *testing.T) {
 		{
 			"JSON unexpected type at root",
 			bytes.NewBufferString(`{"a":{"b":"c"}}`),
-		},{
+		}, {
 			"JSON unexpected type at function",
 			bytes.NewBufferString(`{"a":[{"b":{}}]}`),
 		},

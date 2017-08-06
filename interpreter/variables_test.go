@@ -1,8 +1,8 @@
 package interpreter
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestVarScope(t *testing.T) {
