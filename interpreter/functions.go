@@ -19,6 +19,7 @@ func NewFuncScope(maxDepth int) *FuncScope {
 
 func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) (err error) {
 	errorStr := fmt.Sprintf("Can't execute function %q", name)
+	depth ++
 	if depth > s.maxDepth {
 		err = errors.Wrap(ErrorMaxDepth, errorStr)
 	} else if f, ok := s.funcs[name]; !ok {

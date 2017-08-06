@@ -10,9 +10,14 @@ import (
 )
 
 func Parse(r io.Reader, globalVars *interpreter.VarScope, globalFuncs *interpreter.FuncScope) (err error) {
+	if r == nil {
+		err = ErrorParsingNilAsReader
+		return
+	}
 	buf, err := ioutil.ReadAll(r)
 	if err != nil {
 		errors.Wrap(err, ErrorCannotReadProgram)
+		return
 	}
 	program := make(map[string]interface{})
 	err = json.Unmarshal(buf, &program)
@@ -37,9 +42,10 @@ func Parse(r io.Reader, globalVars *interpreter.VarScope, globalFuncs *interpret
 					for k, rawElement := range command {
 						switch rawElement.(type) {
 						case string:
+							// Global variable with string value
 							elements[k] = rawElement.(string)
 						case float64:
-							// Global variable with number value
+							// Global variable with numeric value
 							elements[k] = strconv.FormatFloat(rawElement.(float64), 'f', -1, 64)
 						default:
 							err = ErrorParsingUnexpectedType

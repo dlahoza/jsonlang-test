@@ -6,8 +6,11 @@ import (
 	"strconv"
 )
 
+// funcCreate creates variable in scope
 type funcCreate struct{}
 
+// Execute executes funcCreate logic
+// Needs id and value variables in local scope
 func (funcCreate) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id, value string
 	if id, value, err = getIDValue(localVars); err != nil {
@@ -18,8 +21,11 @@ func (funcCreate) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 	return
 }
 
+// funcUpdate updates variable in scope
 type funcUpdate struct{}
 
+// Execute executes funcUpdate logic
+// Needs id and value variables in local scope
 func (funcUpdate) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id, value string
 	if id, value, err = getIDValue(localVars); err != nil {
@@ -30,8 +36,11 @@ func (funcUpdate) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 	return
 }
 
+// funcDelete deletes variable from scope
 type funcDelete struct{}
 
+// Execute executes funcDelete logic
+// Needs id variable in local scope
 func (funcDelete) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id string
 	if id, err = localVars.Get("id"); err != nil {
@@ -42,8 +51,11 @@ func (funcDelete) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 	return
 }
 
+// funcPrint prints variable from scope
 type funcPrint struct{}
 
+// Execute executes funcPrint logic
+// Needs id variable in local scope
 func (funcPrint) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var value string
 	if value, _ = localVars.Get("value"); err != nil && err != ErrorVariableDoesNotExist {
@@ -54,8 +66,12 @@ func (funcPrint) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int
 	return
 }
 
+// funcAdd adds two variables and saves result to some variable of scope
+// Can concatenate strings
 type funcAdd struct{}
 
+// Execute executes funcAdd logic
+// Needs id, operand1 and operand2 variables in local scope
 func (funcAdd) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id, operand1, operand2, result string
 	if id, operand1, operand2, err = getIDOperands(localVars); err != nil {
@@ -72,8 +88,11 @@ func (funcAdd) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) 
 	return
 }
 
+// funcSub substracks two variables and saves result to some variable of scope
 type funcSub struct{}
 
+// Execute executes funcSub logic
+// Needs id, operand1 and operand2 variables in local scope
 func (funcSub) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id, result string
 	var o1, o2 float64
@@ -85,8 +104,11 @@ func (funcSub) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) 
 	return
 }
 
+// funcMul multiplies two variables and saves result to some variable of scope
 type funcMul struct{}
 
+// Execute executes funcMul logic
+// Needs id, operand1 and operand2 variables in local scope
 func (funcMul) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id, result string
 	var o1, o2 float64
@@ -98,8 +120,11 @@ func (funcMul) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) 
 	return
 }
 
+// funcDiv divides two variables and saves result to some variable of scope
 type funcDiv struct{}
 
+// Execute executes funcAdd logic
+// Needs id, operand1 and operand2 variables in local scope
 func (funcDiv) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var id, result string
 	var o1, o2 float64
@@ -111,6 +136,7 @@ func (funcDiv) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) 
 	return
 }
 
+// NewInternalFuncScope creates FuncScope and fills it with internal functions
 func NewInternalFuncScope(maxDepth int) *FuncScope {
 	scope := NewFuncScope(maxDepth)
 	scope.Set("create", &funcCreate{})
