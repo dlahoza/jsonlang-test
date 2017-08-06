@@ -5,6 +5,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+type Function interface {
+	Execute(globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) error
+}
+
 type FuncScope struct {
 	maxDepth int
 	funcs    map[string]Function
@@ -32,10 +36,6 @@ func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, intern
 
 func (s *FuncScope) Set(name string, f Function) {
 	s.funcs[name] = f
-}
-
-type Function interface {
-	Execute(globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) error
 }
 
 type UserFunction struct {
