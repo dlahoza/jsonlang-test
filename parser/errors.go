@@ -3,7 +3,8 @@ package parser
 import "github.com/pkg/errors"
 
 var (
-	ErrorCannotReadProgram     = "Cannot read the program"
-	ErrorParsingUnexpectedType = errors.New("Cannot parse, unexpected")
+	// ErrorParsingUnexpectedType "Cannot parse, unexpected type"
+	ErrorParsingUnexpectedType = errors.New("Cannot parse, unexpected type")
+	// ErrorParsingNilAsReader "Reader should not be nil"
 	ErrorParsingNilAsReader    = errors.New("Reader should not be nil")
 )

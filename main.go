@@ -7,6 +7,7 @@ import (
 
 	"github.com/DLag/jsonlang-test/interpreter"
 	"github.com/DLag/jsonlang-test/parser"
+	"log"
 )
 
 func main() {
@@ -31,15 +32,18 @@ func main() {
 	for _, script := range scripts {
 		fmt.Printf("Executing script %q\n", script)
 		f, err := os.Open(script)
-		defer f.Close()
+		if err != nil {
+			log.Fatalf("Can't open file %q", script)
+		}
 		localVars := interpreter.NewVarScope()
 		if err = parser.Parse(f, globalVars, globalFuncs); err != nil {
-			fmt.Println("Error parsing script: ", err)
-			os.Exit(1)
+			log.Fatal("Error parsing script: ", err)
+		}
+		if err = f.Close(); err != nil {
+			log.Fatal("Error when closing file: ", err)
 		}
 		if err = globalFuncs.Execute("init", globalVars, localVars, internalFuncs, globalFuncs, 0); err != nil {
-			fmt.Println("Error executing script: ", err)
-			os.Exit(1)
+			log.Fatal("Error executing script: ", err)
 		}
 	}
 }

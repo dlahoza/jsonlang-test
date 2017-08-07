@@ -46,7 +46,7 @@ func (funcDelete) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 	if id, err = localVars.Get("id"); err != nil {
 		err = errors.Wrap(err, "Can't get value from local scope")
 	} else {
-		globalVars.Delete(id)
+		err = globalVars.Delete(id)
 	}
 	return
 }

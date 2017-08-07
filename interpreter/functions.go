@@ -5,15 +5,20 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Function - basic function interface which describes Execute method
 type Function interface {
+	// Execute executes logic provided by Function object
 	Execute(globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) error
 }
 
+// FuncScope scope of functions
 type FuncScope struct {
+	// maxDepth contains maximum value of execution stack depth
 	maxDepth int
 	funcs    map[string]Function
 }
 
+// NewFuncScope creates new scrop of functions
 func NewFuncScope(maxDepth int) *FuncScope {
 	return &FuncScope{
 		maxDepth: maxDepth,
@@ -21,6 +26,7 @@ func NewFuncScope(maxDepth int) *FuncScope {
 	}
 }
 
+// Execute executes requested function from scope and controls execution stack depth
 func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) (err error) {
 	errorStr := fmt.Sprintf("Can't execute function %q", name)
 	depth++
@@ -34,14 +40,17 @@ func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, intern
 	return
 }
 
+// Set adds or updates function in stack by name
 func (s *FuncScope) Set(name string, f Function) {
 	s.funcs[name] = f
 }
 
+// UserFunction implements user-defined function which satisfy Function interface
 type UserFunction struct {
 	body []map[string]string
 }
 
+// Execute executes user-defined function
 func (f UserFunction) Execute(globalVars, localVars *VarScope, internalFuncs, globalFuncs *FuncScope, depth int) (err error) {
 	for i, instruction := range f.body {
 		var cmd string
@@ -76,6 +85,7 @@ func (f UserFunction) Execute(globalVars, localVars *VarScope, internalFuncs, gl
 	return
 }
 
+// NewUserFunction creates user-defined function object from instruction list
 func NewUserFunction(body []map[string]string) *UserFunction {
 	return &UserFunction{body}
 }

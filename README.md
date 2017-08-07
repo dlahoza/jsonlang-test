@@ -1,5 +1,6 @@
 # jsonlang-test
 [![Build Status](https://travis-ci.org/DLag/jsonlang-test.svg?branch=master)](https://travis-ci.org/DLag/jsonlang-test)
+[![Go Report Card](https://goreportcard.com/badge/github.com/DLag/jsonlang-test)](https://goreportcard.com/report/github.com/DLag/jsonlang-test)
 
 Test task
 
