@@ -14,11 +14,11 @@ $GOPATH/bin/jsonlang-test examples/script1.json examples/script2.json
 ```
 Test maximum execution depth
 ```bash
-$GOPATH/bin/jsonlang-test --examples/recursion.json
+$GOPATH/bin/jsonlang-test --maxdepth=5 examples/recursion.json
 ```
 Test consistence checks
 ```bash
-$GOPATH/bin/jsonlang-test --examples/erroneous.json
+$GOPATH/bin/jsonlang-test examples/erroneous.json
 ```
 Check test coverage
 ```bash
