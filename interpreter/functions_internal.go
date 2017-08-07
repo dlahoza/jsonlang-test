@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"strconv"
+	"io"
 )
 
 // funcCreate creates variable in scope
@@ -52,16 +53,18 @@ func (funcDelete) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ in
 }
 
 // funcPrint prints variable from scope
-type funcPrint struct{}
+type funcPrint struct{
+	output io.Writer
+}
 
 // Execute executes funcPrint logic
 // Needs id variable in local scope
-func (funcPrint) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
+func (f *funcPrint) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) (err error) {
 	var value string
 	if value, _ = localVars.Get("value"); err != nil && err != ErrorVariableDoesNotExist {
 		err = errors.Wrap(err, "Can't get value from local scope")
 	} else {
-		fmt.Println(value)
+		fmt.Fprintln(f.output, value)
 	}
 	return
 }
@@ -137,12 +140,12 @@ func (funcDiv) Execute(globalVars, localVars *VarScope, _, _ *FuncScope, _ int) 
 }
 
 // NewInternalFuncScope creates FuncScope and fills it with internal functions
-func NewInternalFuncScope(maxDepth int) *FuncScope {
+func NewInternalFuncScope(output io.Writer, maxDepth int) *FuncScope {
 	scope := NewFuncScope(maxDepth)
 	scope.Set("create", &funcCreate{})
 	scope.Set("update", &funcUpdate{})
 	scope.Set("delete", &funcDelete{})
-	scope.Set("print", &funcPrint{})
+	scope.Set("print", &funcPrint{output: output})
 	scope.Set("add", &funcAdd{})
 	scope.Set("sub", &funcSub{})
 	scope.Set("mul", &funcMul{})
