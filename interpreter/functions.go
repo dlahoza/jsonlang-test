@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+
 	"github.com/pkg/errors"
 )
 
@@ -36,6 +37,9 @@ func (s *FuncScope) Execute(name string, globalVars, localVars *VarScope, intern
 		err = errors.Wrapf(ErrorFunctionDoesNotExist, errorStr)
 	} else {
 		err = f.Execute(globalVars, localVars, internalFuncs, globalFuncs, depth)
+		if err != nil {
+			err = errors.Wrapf(ErrorFunctionDoesNotExist, errorStr)
+		}
 	}
 	return
 }

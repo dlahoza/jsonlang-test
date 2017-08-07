@@ -2,11 +2,12 @@ package parser
 
 import (
 	"encoding/json"
-	"github.com/DLag/jsonlang-test/interpreter"
-	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"strconv"
+
+	"github.com/DLag/jsonlang-test/interpreter"
+	"github.com/pkg/errors"
 )
 
 // Parse consumes io.Reader and parses JSON FSL to internal representation
@@ -43,7 +44,7 @@ func Parse(r io.Reader, globalVars *interpreter.VarScope, globalFuncs *interpret
 			}
 			globalFuncs.Set(item, interpreter.NewUserFunction(body))
 		default:
-			err = ErrorParsingUnexpectedType
+			err = errors.Wrapf(ErrorParsingUnexpectedType, "Type T%", value)
 			return
 		}
 	}
@@ -52,12 +53,12 @@ func Parse(r io.Reader, globalVars *interpreter.VarScope, globalFuncs *interpret
 
 func parseFunction(rawFunction interface{}) (body []map[string]string, err error) {
 	function := rawFunction.([]interface{})
-	body = make([]map[string]string, len(function))
-	for _, rawCommand := range rawFunction.([]interface{}) {
+	body = make([]map[string]string, 0, len(function))
+	for _, rawCommand := range function {
 		if command, ok := rawCommand.(map[string]interface{}); ok {
 			var elements map[string]string
 			elements, err = parseCommand(command)
-			if err != nil {
+			if err != nil || elements == nil {
 				return
 			}
 			body = append(body, elements)
