@@ -5,23 +5,23 @@
 
 Test task
 
-###Setup
+### Setup
 ```bash
 go get github.com/DLag/jsonlang-test
 ```
-###Give it a try
+### Give it a try
 ```bash
 $GOPATH/bin/jsonlang-test examples/script1.json examples/script2.json
 ```
-###Test maximum execution depth
+### Test maximum execution depth
 ```bash
 $GOPATH/bin/jsonlang-test --maxdepth=5 examples/recursion.json
 ```
-###Test consistence checks
+### Test consistence checks
 ```bash
 $GOPATH/bin/jsonlang-test examples/erroneous.json
 ```
-###Check test coverage
+### Check test coverage
 ```bash
 go test -v -cover ./...
 ```
